@@ -309,78 +309,73 @@ scale_nominal_param_value = True
 from pathlib import Path
 from openpyxl import Workbook, load_workbook
 
-NOTEBOOK_ID = "Reactor" # Defining the notebook ID for excel sheet tagging
-SCENARIO = "Central" # Scenario implies the environment
+# NOTEBOOK_ID = "Reactor" # Defining the notebook ID for excel sheet tagging
+# SCENARIO = "Central" # Scenario implies the environment
 
 
-"Creating a path object and creating an excel file to save the output of the runs"
-RESULTS_DIR = Path("results") ## Foldername
-RESULTS_DIR.mkdir(exist_ok=True)
-XLSX_PATH = Path("results")/ f"{NOTEBOOK_ID}_{SCENARIO}.xlsx" ## Create an excel sheet with the 
-# notebook ID and scenario
+# "Creating a path object and creating an excel file to save the output of the runs"
+# RESULTS_DIR = Path("results") ## Foldername
+# RESULTS_DIR.mkdir(exist_ok=True)
+# XLSX_PATH = Path("results")/ f"{NOTEBOOK_ID}_{SCENARIO}.xlsx" ## Create an excel sheet with the 
+# # notebook ID and scenario
 
-SHEET_NAME = "Data" ## Name of the sheet within the excel file
-
-
-## Creating the excel file
+# SHEET_NAME = "Data" ## Name of the sheet within the excel file
 
 
-wb = Workbook()
-ws = wb.active
-ws.title = SHEET_NAME
-
-design_names = None # specifies the column names, will be filled at the first run
+# ## Creating the excel file
 
 
+# wb = Workbook()
+# ws = wb.active
+# ws.title = SHEET_NAME
 
-N_Runs = 1000 ## Number of runs in this code
+# design_names = None # specifies the column names, will be filled at the first run
 
-for run in range(1, N_Runs+1):
-    print(f"Run {run}/{N_Runs}")
-    doe_obj = DesignOfExperiments(
-    experiment,
-    fd_formula=fd_formula,
-    step=step_size,
-    objective_option=objective_option,
-    scale_constant_value=1,
-    scale_nominal_param_value=scale_nominal_param_value,
-    prior_FIM=None,
-    jac_initial=None,
-    fim_initial=None,
-    L_diagonal_lower_bound=1e-7,
-    solver= make_ipopt(),#SolverFactory('IPOPT'),
-    tee=True,
-    get_labeled_model_args=None,
-    _Cholesky_option=True,
-    _only_compute_fim_lower=True,
-    )
-    doe_obj.run_doe()
 
-    if run == 1: ## Do this only on run 1
-        ## Header names
-        HEADERS = [
-            "run",
-            "solve_time",
-            "build_time",
-            "init_time",
-            "wall_time",
-            "objective_value"
-        ] + list(doe_obj.results["Experiment Design Names"])
+doe_obj = DesignOfExperiments(
+experiment,
+fd_formula=fd_formula,
+step=step_size,
+objective_option=objective_option,
+scale_constant_value=1,
+scale_nominal_param_value=scale_nominal_param_value,
+prior_FIM=None,
+jac_initial=None,
+fim_initial=None,
+L_diagonal_lower_bound=1e-7,
+solver= make_ipopt(),#SolverFactory('IPOPT'),
+tee=True,
+get_labeled_model_args=None,
+_Cholesky_option=True,
+_only_compute_fim_lower=True,
+)
+doe_obj.run_doe()
+
+#     if run == 1: ## Do this only on run 1
+#         ## Header names
+#         HEADERS = [
+#             "run",
+#             "solve_time",
+#             "build_time",
+#             "init_time",
+#             "wall_time",
+#             "objective_value"
+#         ] + list(doe_obj.results["Experiment Design Names"])
         
-        ws.append(HEADERS)
+#         ws.append(HEADERS)
 
-    row = [
-        run,
-        doe_obj.results["Solve Time"],
-        doe_obj.results["Build Time"],
-        doe_obj.results["Initialization Time"],
-        doe_obj.results["Wall-clock Time"],
-        pyo.value(doe_obj.model.objective)
-    ] + list(doe_obj.results["Experiment Design"])
+#     row = [
+#         run,
+#         doe_obj.results["Solve Time"],
+#         doe_obj.results["Build Time"],
+#         doe_obj.results["Initialization Time"],
+#         doe_obj.results["Wall-clock Time"],
+#         pyo.value(doe_obj.model.objective)
+#     ] + list(doe_obj.results["Experiment Design"])
 
-    ws.append(row)
+#     ws.append(row)
     
-wb.save(XLSX_PATH)
+# wb.save(XLSX_PATH)
 
 # Print out a results summary
 print("Optimal experiment values: ")
