@@ -1,0 +1,18 @@
+{
+  "method": "symbolic",
+  "nfe_x": 5,
+  "nfe_t": 10,
+  "doe_build_time": 0.12914254202041775,
+  "doe_init_time": 0.06356429192237556,
+  "doe_solve_time": 0.29613709449768066,
+  "doe_wall_time": 0.488843928440474,
+  "ipopt_iters": 21,
+  "obj_eval": 25,
+  "grad_eval": 22,
+  "eq_con_eval": 25,
+  "eq_jac_eval": 22,
+  "hess_eval": 21,
+  "ipopt_cpu_wo_feval": 0.233,
+  "ipopt_cpu_nlp_feval": 0.0,
+  "ipopt_exit": "Optimal Solution Found."
+}

@@ -1,0 +1,3 @@
+method,nfe_x,nfe_t,doe_build_time,doe_init_time,doe_wall_time,source_file
+central,50,75,3.907794125028886,3.93425920791924,7.842053332948126,no_solve_nfe_x50_nfe_t75.json
+symbolic,50,75,101.07510916597676,3.830419250065461,104.90552841604222,no_solve_nfe_x50_nfe_t75.json

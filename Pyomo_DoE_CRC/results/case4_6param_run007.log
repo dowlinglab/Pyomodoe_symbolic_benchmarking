@@ -1,0 +1,9 @@
+
+Traceback (most recent call last):
+  File "/Users/snarasi2/projects/Pyomo_DoE_CRC/4st_6pmt_sym.py", line 307, in <module>
+    doe_obj = DesignOfExperiments(
+    experiment,
+    ...<14 lines>...
+    _only_compute_fim_lower=True,
+    )
+TypeError: DesignOfExperiments.__init__() got an unexpected keyword argument 'gradient_method'

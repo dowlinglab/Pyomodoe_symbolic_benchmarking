@@ -1,0 +1,17 @@
+ipopt version check failed: name 'shutil' is not defined
+Objective option: condition_number
+Traceback (most recent call last):
+  File "/Users/snarasi2/projects/Pyomo_DoE_CRC/4_state_reactor_central.py", line 363, in <module>
+    doe_obj.run_doe()
+    ~~~~~~~~~~~~~~~^^
+  File "/opt/anaconda3/lib/python3.13/site-packages/pyomo/contrib/doe/doe.py", line 303, in run_doe
+    self.create_objective_function(model=model)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.13/site-packages/pyomo/contrib/doe/doe.py", line 1286, in create_objective_function
+    raise DeveloperError(
+    ...<2 lines>...
+    )
+pyomo.common.errors.DeveloperError: Internal Pyomo implementation error:
+        'Objective option not recognized. Please contact the developers as
+        you should not see this error.'
+    Please report this to the Pyomo Developers.

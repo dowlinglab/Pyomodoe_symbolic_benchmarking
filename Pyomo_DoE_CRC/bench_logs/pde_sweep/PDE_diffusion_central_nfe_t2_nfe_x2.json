@@ -1,0 +1,35 @@
+{
+  "method": "central",
+  "nfe_t": 2,
+  "nfe_x": 2,
+  "timing": {
+    "solve_time_s": 0.03053170902421698,
+    "build_time_s": 0.09364691702648997,
+    "initialization_time_s": 0.027629915974102914,
+    "wall_clock_time_s": 0.15180854202480987,
+    "script_wall_time_s": 0.1522219181060791
+  },
+  "ipopt": {
+    "iterations": 7,
+    "objective_scaled": -1.3050320724385998,
+    "objective_unscaled": -1.3050320724385998,
+    "dual_infeasibility_scaled": 0.1253454345384259,
+    "dual_infeasibility_unscaled": 0.1253454345384259,
+    "constraint_violation_scaled": 0.00999999,
+    "constraint_violation_unscaled": 0.00999999,
+    "complementarity_scaled": 4.492789048798621,
+    "complementarity_unscaled": 4.492789048798621,
+    "overall_nlp_error_scaled": 4.492789048798621,
+    "overall_nlp_error_unscaled": 4.492789048798621,
+    "obj_eval_count": 8,
+    "grad_eval_count": 8,
+    "eq_con_eval_count": 8,
+    "ineq_con_eval_count": 0,
+    "eq_con_jac_eval_count": 8,
+    "ineq_con_jac_eval_count": 0,
+    "hess_eval_count": 7,
+    "ipopt_cpu_secs_no_eval": 0.008,
+    "nlp_cpu_secs_eval": 0.0,
+    "exit": "Optimal Solution Found."
+  }
+}

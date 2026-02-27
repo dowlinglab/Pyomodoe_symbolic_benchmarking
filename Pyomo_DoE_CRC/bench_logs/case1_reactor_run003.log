@@ -1,0 +1,35 @@
+Number of Iterations....: 23
+
+                                   (scaled)                 (unscaled)
+Objective...............:  -1.1297031553005572e+01   -1.1297031553005572e+01
+Dual infeasibility......:  1.1005773374437000e+00   1.1005773374437000e+00
+Constraint violation....:  2.6492048506855070e+00   2.6492048506855070e+00
+Complementarity.........:  3.9700001003000000e+02   3.9700001003000000e+02
+Overall NLP error.......:  3.9700001003000000e+02   3.9700001003000000e+02
+
+Number of objective function evaluations             = 24
+Number of objective gradient evaluations             = 24
+Number of equality constraint evaluations            = 24
+Number of inequality constraint evaluations          = 0
+Number of equality constraint Jacobian evaluations   = 24
+Number of inequality constraint Jacobian evaluations = 0
+Number of Lagrangian Hessian evaluations             = 23
+Total CPU secs in IPOPT (w/o function evaluations)   = 0.988
+Total CPU secs in NLP function evaluations           = 0.003
+EXIT: Optimal Solution Found.
+Optimal experiment values: 
+	Initial concentration: 5.00
+	Temperature values: [481.88, 300.00, 300.00, 300.00, 300.00, 300.00, 300.00, 300.00, 300.00]
+FIM at optimal design:
+ [[  1731.79089055   1442.18099318  -3647.74691349  -7115.51970488]
+ [  1442.18099318   3479.17598012  -2710.24342003 -16836.77882308]
+ [ -3647.74691349  -2710.24342003   7809.41772632  13457.72531515]
+ [ -7115.51970488 -16836.77882308  13457.72531515  82181.28341607]]
+Objective value at optimal design: 11.32
+['CA[0]', 'T[0]', 'T[0.125]', 'T[0.25]', 'T[0.375]', 'T[0.5]', 'T[0.625]', 'T[0.75]', 'T[0.875]', 'T[1]']
+['Build Time', 'Experiment Design', 'Experiment Design Names', 'Experiment Output Names', 'Experiment Outputs', 'FIM', 'FIM Condition Number', 'Finite Difference Scheme', 'Finite Difference Step', 'Initialization Time', 'Measurement Error', 'Measurement Error Names', 'Nominal Parameter Scaling', 'Objective expression', 'Prior FIM', 'Sensitivity Matrix', 'Solve Time', 'Solver Status', 'Termination Condition', 'Termination Message', 'Unknown Parameter Names', 'Unknown Parameters', 'Wall-clock Time', 'log10 A-opt', 'log10 D-opt', 'log10 E-opt']
+Solve time (s): 1.100115624954924
+Build time (s): 0.3466175840003416
+Initialization time (s): 0.8994617910357192
+Total wall time (s): 2.346194999990985
+

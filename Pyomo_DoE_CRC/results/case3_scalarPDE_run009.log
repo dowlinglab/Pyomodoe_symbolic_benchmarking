@@ -1,0 +1,9 @@
+
+/Users/snarasi2/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/s_/6c59kmq52ng_lrn3ml1_mg5m0000gt/T/matplotlib-6oxroybm because there was an issue with the default path (/Users/snarasi2/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+usage: PDE_diffusion_sym.py [-h] [--nfe_t NFE_T] [--nfe_x NFE_X]
+                            [--ncp_t NCP_T] [--ncp_x NCP_X]
+                            [--out_json OUT_JSON] [--run_dir RUN_DIR]
+                            [--ipopt_out IPOPT_OUT]
+PDE_diffusion_sym.py: error: unrecognized arguments: --wdir

@@ -1,0 +1,21 @@
+Diagnostic interpretation (quantitative)
+
+Largest discretization (nfe_x=50, nfe_t=75):
+central build=3.7738761249929667, init=3.8362796250730753, solve=53.123327016830444, wall=60.691061766818166, ipopt_iters=40.0
+symbolic build=101.433560833917, init=3.809965334017761, solve=53.07908296585083, wall=158.32398250780534, ipopt_iters=40.0
+
+central ipopt_iters increasing with refinement: True
+central solve_time_per_iter increasing with refinement: True
+symbolic ipopt_iters increasing with refinement: True
+symbolic solve_time_per_iter increasing with refinement: True
+Dominant wall-time stage (central, largest): solve
+Symbolic/Central ratios at largest: build=26.87781937572369, init=0.9931406743962745, solve=0.9991671445772664, wall=2.6086869779293655, solve_time_per_iter=0.9991671445772664
+ipopt_cpu_wo_feval growth: central=2899.235294117647, symbolic=2761.3333333333335, faster=central
+ipopt_cpu_nlp_feval growth: insufficient nonzero baseline for ratio
+
+Primary slowdown driver:
+See dominant wall-time stage and symbolic/central ratios above.
+Evidence:
+Largest discretization times and ratios, plus trends in iterations and per-iter time.
+Recommended next step:
+Inspect the dominant stage in profiling or enable solver logs for deeper timing granularity.

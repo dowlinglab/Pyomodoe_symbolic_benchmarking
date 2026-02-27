@@ -1,0 +1,5 @@
+/Users/snarasi2/projects/Pyomo_DoE_CRC/out/analysis_20260225_170852/pde_scaling_table.csv
+/Users/snarasi2/projects/Pyomo_DoE_CRC/out/analysis_20260225_170852/pde_time_metrics_vs_discretization.png
+/Users/snarasi2/projects/Pyomo_DoE_CRC/out/analysis_20260225_170852/pde_solver_metrics_vs_discretization.png
+/Users/snarasi2/projects/Pyomo_DoE_CRC/out/analysis_20260225_170852/pde_scaling_summary.txt
+/Users/snarasi2/projects/Pyomo_DoE_CRC/out/analysis_20260225_170852/manifest_outputs.txt

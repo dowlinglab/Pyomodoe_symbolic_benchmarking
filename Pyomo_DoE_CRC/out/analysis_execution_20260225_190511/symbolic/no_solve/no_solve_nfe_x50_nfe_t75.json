@@ -1,0 +1,8 @@
+{
+  "method": "symbolic",
+  "nfe_x": 50,
+  "nfe_t": 75,
+  "doe_build_time": 101.07510916597676,
+  "doe_init_time": 3.830419250065461,
+  "doe_wall_time": 104.90552841604222
+}

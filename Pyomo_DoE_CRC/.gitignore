@@ -1,0 +1,5 @@
+
+# solver outputs
+*.out
+ipopt.out
+ipopt_reactor.out

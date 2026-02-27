@@ -1,0 +1,3 @@
+
+usage: 4st_6pmt_central.py [-h] --run-id RUN_ID --metrics-csv METRICS_CSV
+4st_6pmt_central.py: error: the following arguments are required: --run-id, --metrics-csv

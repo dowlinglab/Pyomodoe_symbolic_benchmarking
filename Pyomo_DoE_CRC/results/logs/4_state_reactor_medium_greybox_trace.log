@@ -1,0 +1,38 @@
+ipopt version check failed: name 'shutil' is not defined
+Objective option: trace
+Objective implementation: greybox (external)
+Model sizes (from IPOPT): n_cons=None, nnz_jac=None, nnz_hess=None
+Number of Iterations....: 14
+
+                                   (scaled)                 (unscaled)
+Objective...............:  0.0000000000000000e+00   0.0000000000000000e+00
+Dual infeasibility......:  1.0000000000000000e+00   1.0000000000000000e+00
+Constraint violation....:  4.9500000000000000e+01   9.9000000000000000e+01
+Complementarity.........:  3.9700001003000000e+02   3.9700001003000000e+02
+Overall NLP error.......:  4.9500000000000000e+01   3.9700001003000000e+02
+
+Number of objective function evaluations             = 125
+Number of objective gradient evaluations             = 15
+Number of equality constraint evaluations            = 125
+Number of inequality constraint evaluations          = 0
+Number of equality constraint Jacobian evaluations   = 15
+Number of inequality constraint Jacobian evaluations = 0
+Number of Lagrangian Hessian evaluations             = 14
+Total CPU secs in IPOPT (w/o function evaluations)   = 0.785
+Total CPU secs in NLP function evaluations           = 0.005
+EXIT: Optimal Solution Found.
+Optimal experiment values: 
+	Initial concentration: 5.00
+	Temperature values: [500.00, 300.00, 300.00, 300.00, 300.00, 300.00, 300.00, 300.00, 300.00]
+FIM at optimal design:
+ [[  1745.81511961   1599.2189325   -3512.47883641  -7589.23798507]
+ [  1599.2189325    3525.64014331  -2900.9433435  -16465.41646749]
+ [ -3512.47883641  -2900.9433435    7190.12387819  13849.90480261]
+ [ -7589.23798507 -16465.41646749  13849.90480261  77673.547297  ]]
+Objective value at optimal design: 0.00
+['CA[0]', 'T[0]', 'T[0.125]', 'T[0.25]', 'T[0.375]', 'T[0.5]', 'T[0.625]', 'T[0.75]', 'T[0.875]', 'T[1]']
+['Build Time', 'Experiment Design', 'Experiment Design Names', 'Experiment Output Names', 'Experiment Outputs', 'FIM', 'FIM Condition Number', 'Finite Difference Scheme', 'Finite Difference Step', 'Initialization Time', 'Measurement Error', 'Measurement Error Names', 'Nominal Parameter Scaling', 'Objective expression', 'Prior FIM', 'Sensitivity Matrix', 'Solve Time', 'Solver Status', 'Termination Condition', 'Termination Message', 'Unknown Parameter Names', 'Unknown Parameters', 'Wall-clock Time', 'log10 A-opt', 'log10 D-opt', 'log10 E-opt']
+Solve time (s): 0.06490975013002753
+Build time (s): 2.3331958800554276e-06
+Initialization time (s): 0.9184662078041583
+Total wall time (s): 0.9833782911300659

@@ -1,0 +1,28 @@
+/Users/snarasi2/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/s_/6c59kmq52ng_lrn3ml1_mg5m0000gt/T/matplotlib-ce97jgcn because there was an issue with the default path (/Users/snarasi2/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+ERROR: Solver (ipopt) returned non-zero return code (-11)
+ERROR: See the solver log above for diagnostic information.
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/pyomo/lib/python3.10/site-packages/pyomo/contrib/doe/doe.py", line 1176, in _generate_scenario_blocks
+    res = self.solver.solve(model.base_model, tee=self.tee)
+  File "/Users/snarasi2/projects/Pyomo_DoE_CRC/bench/sitecustomize.py", line 39, in solve
+    return orig_solve(*args, **kwargs)
+  File "/opt/anaconda3/envs/pyomo/lib/python3.10/site-packages/pyomo/opt/base/solvers.py", line 654, in solve
+    raise ApplicationError("Solver (%s) did not exit normally" % self.name)
+pyomo.common.errors.ApplicationError: Solver (ipopt) did not exit normally
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/snarasi2/projects/Pyomo_DoE_CRC/PDE_diffusion_central.py", line 473, in <module>
+    main()
+  File "/Users/snarasi2/projects/Pyomo_DoE_CRC/PDE_diffusion_central.py", line 366, in main
+    doe_obj.run_doe()
+  File "/opt/anaconda3/envs/pyomo/lib/python3.10/site-packages/pyomo/contrib/doe/doe.py", line 297, in run_doe
+    self.create_doe_model(model=model)
+  File "/opt/anaconda3/envs/pyomo/lib/python3.10/site-packages/pyomo/contrib/doe/doe.py", line 877, in create_doe_model
+    self._generate_scenario_blocks(model=model)
+  File "/opt/anaconda3/envs/pyomo/lib/python3.10/site-packages/pyomo/contrib/doe/doe.py", line 1180, in _generate_scenario_blocks
+    raise RuntimeError(
+RuntimeError: Model from experiment did not solve appropriately. Make sure the model is well-posed.

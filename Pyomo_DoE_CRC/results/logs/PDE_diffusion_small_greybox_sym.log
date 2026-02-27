@@ -1,0 +1,3 @@
+  File "/Users/snarasi2/projects/Pyomo_DoE_CRC/PDE_diffusion_sym_greybox.py", line 341
+    end_ts = time.time()
+IndentationError: unexpected indent

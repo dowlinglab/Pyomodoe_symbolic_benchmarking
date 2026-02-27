@@ -1,0 +1,32 @@
+Objective implementation: greybox (external)
+Model sizes (from IPOPT): n_cons=None, nnz_jac=None, nnz_hess=None
+Number of Iterations....: 4
+
+                                   (scaled)                 (unscaled)
+Objective...............:  0.0000000000000000e+00   0.0000000000000000e+00
+Dual infeasibility......:  0.0000000000000000e+00   0.0000000000000000e+00
+Constraint violation....:  4.9500000000000000e+01   9.9000000000000000e+01
+Complementarity.........:  1.9900000198999999e+00   1.9900000198999999e+00
+Overall NLP error.......:  4.9500000000000000e+01   9.9000000000000000e+01
+
+Number of objective function evaluations             = 5
+Number of objective gradient evaluations             = 5
+Number of equality constraint evaluations            = 5
+Number of inequality constraint evaluations          = 0
+Number of equality constraint Jacobian evaluations   = 5
+Number of inequality constraint Jacobian evaluations = 0
+Number of Lagrangian Hessian evaluations             = 4
+Total CPU secs in IPOPT (w/o function evaluations)   = None
+Total CPU secs in NLP function evaluations           = None
+EXIT: Optimal Solution Found.
+Optimal experiment values: 
+	Initial state: 0.50
+	 Control input values: [-1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00]
+FIM at optimal design:
+ [[3.27917762]]
+Objective value at optimal design: 1.19
+['x[0]', 'u[0]', 'u[0.125]', 'u[0.25]', 'u[0.375]', 'u[0.5]', 'u[0.625]', 'u[0.75]', 'u[0.875]', 'u[1]']
+Solve time (s): 0.02520966704469174
+Build time (s): 2.750079147517681e-06
+Initialization time (s): 0.07715049991384149
+Total wall time (s): 0.10236291703768075

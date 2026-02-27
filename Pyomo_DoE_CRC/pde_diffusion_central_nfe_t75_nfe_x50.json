@@ -1,0 +1,18 @@
+{
+  "method": "central",
+  "nfe_x": 50,
+  "nfe_t": 75,
+  "doe_solve_time": 0.8357923331204802,
+  "doe_build_time": 3.7499703466892242e-06,
+  "doe_init_time": 3.892886291956529,
+  "doe_wall_time": 4.728682375047356,
+  "ipopt_iters": 4,
+  "obj_eval": 6,
+  "grad_eval": 5,
+  "eq_con_eval": 6,
+  "eq_jac_eval": 5,
+  "hess_eval": 4,
+  "ipopt_cpu_wo_feval": 3.187,
+  "ipopt_cpu_nlp_feval": 0.003,
+  "ipopt_exit": "Optimal Solution Found."
+}

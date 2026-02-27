@@ -1,0 +1,47 @@
+PDE discretization scaling summary
+Figures:
+1) pde_time_metrics_vs_discretization.png
+2) pde_solver_metrics_vs_discretization.png
+
+Case x2t2
+Central: build=0.06599120801547542, solve=0.028884499974083155, wall=0.11873024998931214, ipopt_exit=Optimal Solution Found.
+Symbolic: build=0.032881958002690226, solve=0.024150207987986505, wall=0.07494179101195186, ipopt_exit=Optimal Solution Found.
+Ratios (symbolic/central): build=0.49827786142328484, solve=0.8360957610363853, wall=0.6311937439590835
+Dominant wall contributor (Central): build (build=0.06599120801547542, solve=0.028884499974083155, wall=0.11873024998931214)
+Anomalies: Central ipopt_exit=Optimal Solution Found. (non-optimal); Symbolic ipopt_exit=Optimal Solution Found. (non-optimal)
+
+Case x5t10
+Central: build=0.10000737500377, solve=0.17387833300745115, wall=0.3400150830275379, ipopt_exit=Optimal Solution Found.
+Symbolic: build=0.14429933397332206, solve=0.17316033400129527, wall=0.3598610839690082, ipopt_exit=Optimal Solution Found.
+Ratios (symbolic/central): build=1.4428869267679747, solve=0.9958706815637282, wall=1.0583680016920394
+Dominant wall contributor (Central): solve (build=0.10000737500377, solve=0.17387833300745115, wall=0.3400150830275379)
+Anomalies: Central ipopt_exit=Optimal Solution Found. (non-optimal); Symbolic ipopt_exit=Optimal Solution Found. (non-optimal)
+
+Case x10t20
+Central: build=0.1972940830164589, solve=0.7355870000319555, wall=1.1287676250212826, ipopt_exit=Optimal Solution Found.
+Symbolic: build=1.3132357919821516, solve=0.8417539580259472, wall=2.356060583028011, ipopt_exit=Optimal Solution Found.
+Ratios (symbolic/central): build=6.656235057351402, solve=1.1443295735098358, wall=2.087285753773801
+Dominant wall contributor (Central): solve (build=0.1972940830164589, solve=0.7355870000319555, wall=1.1287676250212826)
+Anomalies: Central ipopt_exit=Optimal Solution Found. (non-optimal); Symbolic ipopt_exit=Optimal Solution Found. (non-optimal)
+
+Case x25t40
+Central: build=0.8281406249734573, solve=8.265135708032176, wall=10.055252999998629, ipopt_exit=Optimal Solution Found.
+Symbolic: build=30.710016250028275, solve=13.821556499984581, wall=46.679568624997046, ipopt_exit=Optimal Solution Found.
+Ratios (symbolic/central): build=37.08309352775993, solve=1.6722721789737338, wall=4.642306725151859
+Dominant wall contributor (Central): solve (build=0.8281406249734573, solve=8.265135708032176, wall=10.055252999998629)
+Anomalies: Central ipopt_exit=Optimal Solution Found. (non-optimal); Symbolic ipopt_exit=Optimal Solution Found. (non-optimal)
+
+Case x50t75
+Central: build=3.772261916019488, solve=57.142720167001244, wall=64.82783670799108, ipopt_exit=Optimal Solution Found.
+Symbolic: build=2034.2886184580275, solve=76.88007379201008, wall=2156.1745010000304, ipopt_exit=Optimal Solution Found.
+Ratios (symbolic/central): build=539.2755497223321, solve=1.3454045163990418, wall=33.2600100588309
+Dominant wall contributor (Central): solve (build=3.772261916019488, solve=57.142720167001244, wall=64.82783670799108)
+Anomalies: Central ipopt_exit=Optimal Solution Found. (non-optimal); Symbolic ipopt_exit=Optimal Solution Found. (non-optimal)
+
+Scaling progression by discretization:
+Central build times: [np.float64(0.06599120801547542), np.float64(0.10000737500377), np.float64(0.1972940830164589), np.float64(0.8281406249734573), np.float64(3.772261916019488)]
+Central solve times: [np.float64(0.028884499974083155), np.float64(0.17387833300745115), np.float64(0.7355870000319555), np.float64(8.265135708032176), np.float64(57.142720167001244)]
+Central wall times: [np.float64(0.11873024998931214), np.float64(0.3400150830275379), np.float64(1.1287676250212826), np.float64(10.055252999998629), np.float64(64.82783670799108)]
+Symbolic build times: [np.float64(0.032881958002690226), np.float64(0.14429933397332206), np.float64(1.3132357919821516), np.float64(30.710016250028275), np.float64(2034.2886184580275)]
+Symbolic solve times: [np.float64(0.024150207987986505), np.float64(0.17316033400129527), np.float64(0.8417539580259472), np.float64(13.821556499984581), np.float64(76.88007379201008)]
+Symbolic wall times: [np.float64(0.07494179101195186), np.float64(0.3598610839690082), np.float64(2.356060583028011), np.float64(46.679568624997046), np.float64(2156.1745010000304)]

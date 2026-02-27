@@ -1,0 +1,95 @@
+#!/bin/bash
+#$ -N doe_sym
+#$ -cwd
+#$ -j y
+#$ -o logs/$JOB_NAME.$JOB_ID.$TASK_ID.out
+#$ -l h_vmem=64G
+#$ -pe smp 8
+#$ -t 1-5
+
+set -euo pipefail
+
+mkdir -p logs artifacts
+
+echo "Host: $(hostname)"
+echo "Start: $(date -Iseconds)"
+
+# Conda activation
+source /afs/crc.nd.edu/x86_64_linux/c/conda/24.7.1/etc/profile.d/conda.sh
+conda activate pyomosym
+
+# Prefer MA57 IPOPT if possible; else MUMPS
+choose_ipopt() {
+  local conda_ipopt before_ipopt after_ipopt idaes_bin idaes_ipopt
+  conda_ipopt="$(command -v ipopt || true)"
+  before_ipopt="${conda_ipopt}"
+
+  # Try MA57 module; accept only if it changes ipopt on PATH and is runnable.
+  if module load ipopt/hsl/3.14.2 >/dev/null 2>&1; then
+    after_ipopt="$(command -v ipopt || true)"
+    if [[ -n "${after_ipopt}" ]] && [[ "${after_ipopt}" != "${before_ipopt}" ]] && "${after_ipopt}" -v >/dev/null 2>&1; then
+      export IPOPT_EXE="${after_ipopt}"
+      export IPOPT_LINEAR_SOLVER="ma57"
+      echo "Using MA57 IPOPT from module: ${IPOPT_EXE}"
+      return 0
+    fi
+  fi
+
+  # Prefer IDAES IPOPT next (typically MUMPS build).
+  idaes_bin="$(python -c 'import idaes.config as cfg; print(cfg.bin_directory)' 2>/dev/null || true)"
+  idaes_ipopt=""
+  if [[ -n "${idaes_bin}" ]] && [[ -x "${idaes_bin}/ipopt" ]]; then
+    idaes_ipopt="${idaes_bin}/ipopt"
+  fi
+  if [[ -n "${idaes_ipopt}" ]] && "${idaes_ipopt}" -v >/dev/null 2>&1; then
+    export IPOPT_EXE="${idaes_ipopt}"
+    export IPOPT_LINEAR_SOLVER="mumps"
+    echo "MA57 unavailable; using IDAES IPOPT (MUMPS): ${IPOPT_EXE}"
+    return 0
+  fi
+
+  # Final fallback: conda env IPOPT with MUMPS.
+  if [[ -n "${conda_ipopt}" ]] && "${conda_ipopt}" -v >/dev/null 2>&1; then
+    export IPOPT_EXE="${conda_ipopt}"
+    export IPOPT_LINEAR_SOLVER="mumps"
+    echo "MA57 unavailable; using conda IPOPT (MUMPS): ${IPOPT_EXE}"
+    return 0
+  fi
+
+  echo "ERROR: No working IPOPT found (MA57 module, IDAES, or conda)."
+  return 1
+}
+choose_ipopt
+
+echo "IPOPT_EXE=${IPOPT_EXE}"
+echo "IPOPT_LINEAR_SOLVER=${IPOPT_LINEAR_SOLVER}"
+"${IPOPT_EXE}" -v | head -n 5 || true
+
+# Map task id -> discretization
+case "$SGE_TASK_ID" in
+  1) nfe_x=2; nfe_t=2 ;;
+  2) nfe_x=5; nfe_t=10 ;;
+  3) nfe_x=10; nfe_t=20 ;;
+  4) nfe_x=25; nfe_t=40 ;;
+  5) nfe_x=50; nfe_t=75 ;;
+  *) echo "Invalid SGE_TASK_ID=$SGE_TASK_ID"; exit 2 ;;
+esac
+
+echo "Case: nfe_x=$nfe_x nfe_t=$nfe_t (SYMBOLIC)"
+
+# Run ONE case (symbolic)
+REPO_DIR=/users/snarasi2/projects/Pyomo_DoE_CRC
+CASE_RUN_DIR=$PWD
+export IPOPT_BIN_OVERRIDE="$IPOPT_EXE"
+
+python "$REPO_DIR/pde_doe_execution_helper.py" \
+  --method symbolic \
+  --mode baseline \
+  --nfe_x "$nfe_x" \
+  --nfe_t "$nfe_t" \
+  --ipopt_exe "$IPOPT_EXE" \
+  --out_json "$CASE_RUN_DIR/artifacts/sym_${nfe_x}_${nfe_t}.json" \
+  --run_dir "$CASE_RUN_DIR/artifacts" \
+  --ipopt_out "$CASE_RUN_DIR/artifacts/sym_${nfe_x}_${nfe_t}.ipopt.out"
+
+echo "End: $(date -Iseconds)"
