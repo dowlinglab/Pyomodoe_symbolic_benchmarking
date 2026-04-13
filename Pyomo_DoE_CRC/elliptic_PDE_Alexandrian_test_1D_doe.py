@@ -3,7 +3,7 @@
 """
 Created on Tue Mar 31 13:30:29 2026
 
-@author: snarasi2
+@author: snarasi2, with support from codex
 """
 """
 This code reproduces the result from the Alexandrian et al (2014) paper
@@ -45,7 +45,8 @@ BC: kux = 0; x = 0,1
 """
 Unit basis functions:
     m(x) = theta1 phi1(x) + theta2 phi2(x)
-    phi{1,2}(x) = 1
+    phi1 (x) = 1 if x1 < 0.5, 0 otherwise
+    phi2(x) = 1 if x2>=0.5, 0 otherwise
     splitting the x (sensor placement) domain into two: x\in [0,0.5) (corresponds to theta1) and x \in[0.5,1] (corresponds to theta2)
 """
 
@@ -53,12 +54,13 @@ Unit basis functions:
 """
 x-grid: 10 pts
 t-grid: 20 pts
+Sensor locations and sampling times chosen based on full factorial design
 
-Sensor locations: x = 0.25 and x = 0.75
-Sampling times: t = 0.2 and t = 0.5
+Sensor locations: x = 0.2 and x = 0.9
+Sampling times: t = 0.1 and t = 0.125
 k = 0.025
 
-Measurement vector: y(theta) =[u(0.25,0.2),u(0.25,0.5),u(0.75,0.2), u(0.75,0.5)]^T
+Measurement vector: y(theta) =[u(0.1,0.2),u(0.1,0.9),u(0.125,0.2), u(0.125,0.9)]^T
 
 This will be used within the frequentist framework for estimating the parameters theta1 and theta2 and hence m(x)
 """
@@ -163,10 +165,10 @@ class PDEAlexandrian1D(Experiment):
     def label_experiment(self):
         m = self.model
         
-        m.y1 = pyo.Expression(expr = m.w1*m.u[0.2,0.25])
-        m.y2 = pyo.Expression(expr = m.w2*m.u[0.2,0.75])
-        m.y3 = pyo.Expression(expr = m.w3*m.u[0.5,0.25])
-        m.y4 = pyo.Expression(expr = m.w4*m.u[0.5,0.75])
+        m.y1 = pyo.Expression(expr = m.w1*m.u[0.1,0.2])
+        m.y2 = pyo.Expression(expr = m.w2*m.u[0.1,0.9])
+        m.y3 = pyo.Expression(expr = m.w3*m.u[0.125,0.2])
+        m.y4 = pyo.Expression(expr = m.w4*m.u[0.125,0.9])
         
         m.experiment_outputs = pyo.Suffix(direction=pyo.Suffix.LOCAL)
         m.experiment_outputs.update((k, 0.0) for k in [m.y1, m.y2, m.y3, m.y4])

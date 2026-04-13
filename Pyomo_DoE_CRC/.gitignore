@@ -11,6 +11,9 @@ ipopt_reactor.out
 __pycache__/
 *.pyc
 
+# Local vendor/transplant work (large; keep out of git)
+_pyomo_transplant/
+
 # Results / artifacts (keep code-only by default)
 results/
 results_plots/
@@ -23,3 +26,6 @@ results_plots/
 # Data archives / spreadsheets
 *.zip
 *.xlsx
+
+# Local breadcrumbs/context notes (do not commit)
+ALEXANDRIAN_1D_DOE_NOTES.md
