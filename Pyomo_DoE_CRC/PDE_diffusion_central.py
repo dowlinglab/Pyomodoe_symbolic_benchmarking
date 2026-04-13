@@ -438,9 +438,12 @@ def main():
 
     import re ## Module that helps search for the string of interest
 
-    with open(ipopt_out_path, "r", encoding="utf-8", errors="replace") as f:
-        txt = f.read()
-    ## Open the .out file in read-only mode, anything that is Nan or things like that should be ignored
+    if os.path.exists(ipopt_out_path):
+        with open(ipopt_out_path, "r", encoding="utf-8", errors="replace") as f:
+            txt = f.read()
+    else:
+        print(f"WARNING: IPOPT output file not found at {ipopt_out_path}. Skipping IPOPT log parsing.")
+        txt = ""
 
     def grab_int(pat):
         m = re.search(pat, txt)

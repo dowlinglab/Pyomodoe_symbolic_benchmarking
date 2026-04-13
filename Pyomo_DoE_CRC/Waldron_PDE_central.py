@@ -324,4 +324,3 @@ print("Total wall time (s):", doe_obj.results["Wall-clock Time"])
 
 ###################
 # End optimal DoE
-

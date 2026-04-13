@@ -3,3 +3,23 @@
 *.out
 ipopt.out
 ipopt_reactor.out
+
+# OS / editor noise
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Results / artifacts (keep code-only by default)
+results/
+results_plots/
+
+# Plots and binaries that should not be committed
+*.png
+*.eps
+*.pdf
+
+# Data archives / spreadsheets
+*.zip
+*.xlsx

@@ -435,86 +435,92 @@ def main():
 
     import re  ## Module that helps search for the string of interest
 
-    with open(ipopt_out_path, "r", encoding="utf-8", errors="replace") as f:
-        txt = f.read()
-    ## Open the .out file in read-only mode, anything that is Nan or things like that should be ignored
+    if Path(ipopt_out_path).exists():
+        with open(ipopt_out_path, "r", encoding="utf-8", errors="replace") as f:
+            txt = f.read()
+        # Open the .out file in read-only mode, ignoring decode issues.
 
-    def grab_int(pat):
-        m = re.search(pat, txt)
-        return int(m.group(1)) if m else None
+        def grab_int(pat):
+            m = re.search(pat, txt)
+            return int(m.group(1)) if m else None
 
-    def grab_float(pat):
-        m = re.search(pat, txt)
-        return float(m.group(1)) if m else None
+        def grab_float(pat):
+            m = re.search(pat, txt)
+            return float(m.group(1)) if m else None
 
-    # Number of Iterations
-    print("Number of Iterations....:", grab_int(r"Number of Iterations.*:\s+(\d+)"))
+        # Number of Iterations
+        print("Number of Iterations....:", grab_int(r"Number of Iterations.*:\s+(\d+)"))
 
-    # Scaled/unscaled final table (print block exactly like you showed)
-    m = re.search(
-        r"Objective\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-        r"Dual infeasibility\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-        r"Constraint violation\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-        r"Complementarity\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-        r"Overall NLP error\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+)",
-        txt,
-        re.DOTALL,
-    )
-    if m:
-        print("\n                                   (scaled)                 (unscaled)")
-        print(f"Objective...............:  {m.group(1)}   {m.group(2)}")
-        print(f"Dual infeasibility......:  {m.group(3)}   {m.group(4)}")
-        print(f"Constraint violation....:  {m.group(5)}   {m.group(6)}")
-        print(f"Complementarity.........:  {m.group(7)}   {m.group(8)}")
-        print(f"Overall NLP error.......:  {m.group(9)}   {m.group(10)}\n")
+        # Scaled/unscaled final table (print block exactly like you showed)
+        m = re.search(
+            r"Objective\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
+            r"Dual infeasibility\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
+            r"Constraint violation\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
+            r"Complementarity\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
+            r"Overall NLP error\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+)",
+            txt,
+            re.DOTALL,
+        )
+        if m:
+            print("\n                                   (scaled)                 (unscaled)")
+            print(f"Objective...............:  {m.group(1)}   {m.group(2)}")
+            print(f"Dual infeasibility......:  {m.group(3)}   {m.group(4)}")
+            print(f"Constraint violation....:  {m.group(5)}   {m.group(6)}")
+            print(f"Complementarity.........:  {m.group(7)}   {m.group(8)}")
+            print(f"Overall NLP error.......:  {m.group(9)}   {m.group(10)}\n")
 
-    # Evaluation counts
-    print(
-        "Number of objective function evaluations             =",
-        grab_int(r"Number of objective function evaluations\s*=\s*(\d+)"),
-    )
-    print(
-        "Number of objective gradient evaluations             =",
-        grab_int(r"Number of objective gradient evaluations\s*=\s*(\d+)"),
-    )
-    print(
-        "Number of equality constraint evaluations            =",
-        grab_int(r"Number of equality constraint evaluations\s*=\s*(\d+)"),
-    )
-    print(
-        "Number of inequality constraint evaluations          =",
-        grab_int(r"Number of inequality constraint evaluations\s*=\s*(\d+)"),
-    )
-    print(
-        "Number of equality constraint Jacobian evaluations   =",
-        grab_int(r"Number of equality constraint Jacobian evaluations\s*=\s*(\d+)"),
-    )
-    print(
-        "Number of inequality constraint Jacobian evaluations =",
-        grab_int(
-            r"Number of inequality constraint Jacobian evaluations\s*=\s*(\d+)"
-        ),
-    )
-    print(
-        "Number of Lagrangian Hessian evaluations             =",
-        grab_int(r"Number of Lagrangian Hessian evaluations\s*=\s*(\d+)"),
-    )
+        # Evaluation counts
+        print(
+            "Number of objective function evaluations             =",
+            grab_int(r"Number of objective function evaluations\s*=\s*(\d+)"),
+        )
+        print(
+            "Number of objective gradient evaluations             =",
+            grab_int(r"Number of objective gradient evaluations\s*=\s*(\d+)"),
+        )
+        print(
+            "Number of equality constraint evaluations            =",
+            grab_int(r"Number of equality constraint evaluations\s*=\s*(\d+)"),
+        )
+        print(
+            "Number of inequality constraint evaluations          =",
+            grab_int(r"Number of inequality constraint evaluations\s*=\s*(\d+)"),
+        )
+        print(
+            "Number of equality constraint Jacobian evaluations   =",
+            grab_int(r"Number of equality constraint Jacobian evaluations\s*=\s*(\d+)"),
+        )
+        print(
+            "Number of inequality constraint Jacobian evaluations =",
+            grab_int(
+                r"Number of inequality constraint Jacobian evaluations\s*=\s*(\d+)"
+            ),
+        )
+        print(
+            "Number of Lagrangian Hessian evaluations             =",
+            grab_int(r"Number of Lagrangian Hessian evaluations\s*=\s*(\d+)"),
+        )
 
-    # CPU times
-    print(
-        "Total CPU secs in IPOPT (w/o function evaluations)   =",
-        grab_float(
-            r"Total CPU secs in IPOPT \(w/o function evaluations\)\s*=\s*([0-9.]+)"
-        ),
-    )
-    print(
-        "Total CPU secs in NLP function evaluations           =",
-        grab_float(r"Total CPU secs in NLP function evaluations\s*=\s*([0-9.]+)"),
-    )
+        # CPU times
+        print(
+            "Total CPU secs in IPOPT (w/o function evaluations)   =",
+            grab_float(
+                r"Total CPU secs in IPOPT \(w/o function evaluations\)\s*=\s*([0-9.]+)"
+            ),
+        )
+        print(
+            "Total CPU secs in NLP function evaluations           =",
+            grab_float(r"Total CPU secs in NLP function evaluations\s*=\s*([0-9.]+)"),
+        )
 
-    # EXIT line
-    m = re.search(r"EXIT:\s*(.*)", txt)
-    print("EXIT:", m.group(1).strip() if m else None)
+        # EXIT line
+        m = re.search(r"EXIT:\s*(.*)", txt)
+        print("EXIT:", m.group(1).strip() if m else None)
+    else:
+        print(
+            f"WARNING: IPOPT output file not found at '{ipopt_out_path}'. "
+            "Skipping IPOPT log parsing."
+        )
 
     """ Print out a results summary"""
 

@@ -357,9 +357,12 @@ _print_model_sizes_from_ipopt()
 
 import re ## Module that helps search for the string of interest
 
-with open("ipopt.out", "r", encoding="utf-8", errors="replace") as f:
-    txt = f.read()
-## Open the .out file in read-only mode, anything that is Nan or things like that should be ignored
+if os.path.exists("ipopt.out"):
+    with open("ipopt.out", "r", encoding="utf-8", errors="replace") as f:
+        txt = f.read()
+else:
+    print("WARNING: ipopt.out not found; skipping IPOPT log parse details.")
+    txt = ""
 
 def grab_int(pat):
     m = re.search(pat, txt)
