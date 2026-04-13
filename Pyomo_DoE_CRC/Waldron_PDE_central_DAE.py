@@ -261,7 +261,7 @@ jac_initial=None,
 fim_initial=None,
 L_diagonal_lower_bound=1e-7,
 solver= make_ipopt(),#SolverFactory('IPOPT'), #, options={'linear_solver': 'mumps'}
-tee=True,
+tee=False,
 get_labeled_model_args=None,
 _Cholesky_option=True,
 _only_compute_fim_lower=True,
@@ -324,4 +324,3 @@ print("Total wall time (s):", doe_obj.results["Wall-clock Time"])
 
 ###################
 # End optimal DoE
-

@@ -1,0 +1,53 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+
+\begin{document}
+
+\begin{center}
+\Large PDE and PDE-Related MBDoE/OED Examples
+\end{center}
+
+\begin{longtable}{p{3.2cm} p{3.6cm} p{3.2cm} p{2.0cm} p{3.4cm}}
+\toprule
+Reference & Model & Parameters & Parameter Dimension & Optimality Used in the Paper \\
+\midrule
+\endfirsthead
+
+\toprule
+Reference & Model & Parameters & Parameter Dimension & Optimality Used in the Paper \\
+\midrule
+\endhead
+
+\bottomrule
+\endfoot
+
+Alexanderian, Petra, Stadler, Ghattas (2014) &
+Time-dependent advection-diffusion PDE in 2D and 3D with sensor placement for inferring the initial condition &
+Initial condition field $m(x)$ &
+Infinite-dimensional in the continuous problem; reported 2D discretization uses $n = 1012$ parameter DOF &
+$A$-optimality \\
+
+Waldron, Pankajakshan, Quaglio, Cao, Galvanin, Gavriilidis (2020) &
+Transient plug-flow reactor for esterification kinetics; physically PDE-based, solved in the paper via an ODE-equivalent reformulation &
+Kinetic parameters $\mathrm{KP1}$, $\mathrm{KP2}$ &
+$2$ &
+$D$-optimality \\
+
+Wang, Dowling (2022) &
+Dynamic non-isothermal fixed-bed breakthrough PDAE model for $\mathrm{CO_2}$ adsorption in a MOF &
+Heat transfer coefficient $U$ and lumped transport coefficient $k$ &
+$2$ &
+Exploratory analysis uses $A$, $D$, $E$, and modified $E$; optimization examples highlight $A$-optimality and $D$-optimality \\
+
+Yu, Zavala, Anitescu &
+PDE-governed natural gas pipeline sensor-placement problem &
+Distributed initial/state quantities inferred from measurements &
+High-dimensional after discretization &
+$A$-optimality; also studies total-flow-variance minimization \\
+
+\end{longtable}
+
+\end{document}
