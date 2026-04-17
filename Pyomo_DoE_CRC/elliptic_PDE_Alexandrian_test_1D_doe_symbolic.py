@@ -165,8 +165,8 @@ class PDEAlexandrian1D(Experiment):
     def label_experiment(self):
         m = self.model
 
-        # Match the symbolic fix: use direct output variables linked to the
-        # weighted state expressions instead of labeling Expressions directly.
+        # Use auxiliary output variables instead of Expressions so the
+        # symbolic/pynumero path sees direct variables as experiment outputs.
         m.y1 = pyo.Var()
         m.y2 = pyo.Var()
         m.y3 = pyo.Var()
@@ -178,7 +178,7 @@ class PDEAlexandrian1D(Experiment):
         m.y4_link = pyo.Constraint(expr=m.y4 == m.w4 * m.u[0.125, 0.9])
         
         m.experiment_outputs = pyo.Suffix(direction=pyo.Suffix.LOCAL)
-        m.experiment_outputs.update((k, 0.0) for k in [m.y1, m.y2, m.y3, m.y4])
+        m.experiment_outputs.update((k, None) for k in [m.y1, m.y2, m.y3, m.y4])
         
         m.measurement_error = pyo.Suffix(direction = pyo.Suffix.LOCAL)
         m.measurement_error.update((k, 1e-2) for k in [m.y1, m.y2, m.y3, m.y4])
@@ -202,17 +202,19 @@ experiment = PDEAlexandrian1D(
     nfe_t=40,
     nfe_x=20,
 )
-
 prior_FIM = np.array([
     [79.91866820224352, 9.030059287560567],
     [9.030059287560567, 9.191229104393898],
 ], dtype=float)
+
 fd_formula = "central"
 step_size = 1e-3
 objective_option = "determinant"
 scale_nominal_param_value = True
 
 from pyomo.contrib.doe import DesignOfExperiments
+solver = pyo.SolverFactory("ipopt")
+solver.options["linear_solver"] = "ma57"
 
 doe_obj_det = DesignOfExperiments(
     experiment,
@@ -224,9 +226,10 @@ doe_obj_det = DesignOfExperiments(
     prior_FIM = prior_FIM,
     jac_initial = None,
     fim_initial = None,
+    gradient_method= "pynumero",
     L_diagonal_lower_bound = 1e-7,
-    solver = pyo.SolverFactory("ipopt"),
-    tee = False,
+    solver = solver,
+    tee = True,
     get_labeled_model_args= None,
     _Cholesky_option = True,
     _only_compute_fim_lower = True,
@@ -278,6 +281,7 @@ doe_obj_det.run_doe()
 #     scale_constant_value = 1,
 #     scale_nominal_param_value = scale_nominal_param_value,
 #     prior_FIM = None,
+#     gradient_method= "pynumero",
 #     jac_initial = None,
 #     fim_initial = None,
 #     L_diagonal_lower_bound = 1e-7,

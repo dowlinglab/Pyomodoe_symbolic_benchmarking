@@ -164,18 +164,11 @@ class PDEAlexandrian1D(Experiment):
     
     def label_experiment(self):
         m = self.model
-
-        # Match the symbolic fix: use direct output variables linked to the
-        # weighted state expressions instead of labeling Expressions directly.
-        m.y1 = pyo.Var()
-        m.y2 = pyo.Var()
-        m.y3 = pyo.Var()
-        m.y4 = pyo.Var()
-
-        m.y1_link = pyo.Constraint(expr=m.y1 == m.w1 * m.u[0.1, 0.2])
-        m.y2_link = pyo.Constraint(expr=m.y2 == m.w2 * m.u[0.1, 0.9])
-        m.y3_link = pyo.Constraint(expr=m.y3 == m.w3 * m.u[0.125, 0.2])
-        m.y4_link = pyo.Constraint(expr=m.y4 == m.w4 * m.u[0.125, 0.9])
+        
+        m.y1 = pyo.Expression(expr = m.w1*m.u[0.1,0.2])
+        m.y2 = pyo.Expression(expr = m.w2*m.u[0.1,0.9])
+        m.y3 = pyo.Expression(expr = m.w3*m.u[0.125,0.2])
+        m.y4 = pyo.Expression(expr = m.w4*m.u[0.125,0.9])
         
         m.experiment_outputs = pyo.Suffix(direction=pyo.Suffix.LOCAL)
         m.experiment_outputs.update((k, 0.0) for k in [m.y1, m.y2, m.y3, m.y4])
@@ -203,10 +196,7 @@ experiment = PDEAlexandrian1D(
     nfe_x=20,
 )
 
-prior_FIM = np.array([
-    [79.91866820224352, 9.030059287560567],
-    [9.030059287560567, 9.191229104393898],
-], dtype=float)
+
 fd_formula = "central"
 step_size = 1e-3
 objective_option = "determinant"
@@ -221,7 +211,7 @@ doe_obj_det = DesignOfExperiments(
     objective_option = objective_option,
     scale_constant_value = 1,
     scale_nominal_param_value = scale_nominal_param_value,
-    prior_FIM = prior_FIM,
+    prior_FIM = None,
     jac_initial = None,
     fim_initial = None,
     L_diagonal_lower_bound = 1e-7,
@@ -232,63 +222,31 @@ doe_obj_det = DesignOfExperiments(
     _only_compute_fim_lower = True,
     )
 
-# import numpy as np
-
-# try:
-#     doe_obj_det.run_doe()
-# except np.linalg.LinAlgError as err:
-#     print("run_doe() hit LinAlgError:", err)
-
-#     S = np.array(doe_obj_det.get_sensitivity_matrix(), dtype=float)
-#     F = np.array(doe_obj_det.get_FIM(), dtype=float)
-
-#     print("\nSensitivity matrix S:")
-#     print(S)
-
-#     print("\nFIM:")
-#     print(F)
-
-#     print("\nrank(S):", np.linalg.matrix_rank(S))
-#     print("singular values of S:", np.linalg.svd(S, compute_uv=False))
-
-#     print("\neigenvalues of F:", np.linalg.eigvals(F))
-#     print("det(F):", np.linalg.det(F))
-#     print("cond(F):", np.linalg.cond(F))
-
-#     # For your 2-parameter case: compare the two columns directly
-#     col1 = S[:, 0]
-#     col2 = S[:, 1]
-#     print("\ncol1:", col1)
-#     print("col2:", col2)
-
-#     # crude proportionality check
-#     nz = np.abs(col1) > 1e-12
-#     if np.any(nz):
-#         print("col2/col1 ratios:", col2[nz] / col1[nz])
 
   
 doe_obj_det.run_doe()
 
 
-# doe_obj_A = DesignOfExperiments(
-#     experiment,
-#     fd_formula = fd_formula,
-#     step= step_size,
-#     objective_option = "trace",
-#     scale_constant_value = 1,
-#     scale_nominal_param_value = scale_nominal_param_value,
-#     prior_FIM = None,
-#     jac_initial = None,
-#     fim_initial = None,
-#     L_diagonal_lower_bound = 1e-7,
-#     solver = pyo.SolverFactory("ipopt"),
-#     tee = False,
-#     get_labeled_model_args= None,
-#     _Cholesky_option = True,
-#     _only_compute_fim_lower = True,
-#     )
+doe_obj_A = DesignOfExperiments(
+    experiment,
+    fd_formula = fd_formula,
+    step= step_size,
+    objective_option = "trace",
+    scale_constant_value = 1,
+    scale_nominal_param_value = scale_nominal_param_value,
+    prior_FIM = None,
+    jac_initial = None,
+    fim_initial = None,
+    L_diagonal_lower_bound = 1e-7,
+    solver = pyo.SolverFactory("ipopt"),
+    tee = False,
+    get_labeled_model_args= None,
+    _Cholesky_option = True,
+    _only_compute_fim_lower = True,
+    )
 
 
   
-# doe_obj_A.run_doe()
+doe_obj_A.run_doe()
+
 
