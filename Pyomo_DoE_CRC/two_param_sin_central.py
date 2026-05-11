@@ -4,15 +4,11 @@
 # In[1]:
 
 
-
-import os
-if os.path.exists("ipopt.out"):
-    os.remove("ipopt.out")
-
-
 "Modifications to avoid the IPOPT Error on CRC"
 
 import shutil
+import os
+import re
 import pyomo.environ as pyo
 
 IPOPT_BIN = shutil.which("ipopt")
@@ -20,8 +16,6 @@ IPOPT_BIN = shutil.which("ipopt")
 def make_ipopt():
     set = pyo.SolverFactory("ipopt", executable = IPOPT_BIN)
     set.options["linear_solver"] = "ma57"
-    
-    # # ---- IPOPT logging ----
     set.options["output_file"] = "ipopt.out"
     set.options["file_print_level"] = 12
     return set
@@ -242,8 +236,7 @@ fd_formula = "central"
 step_size = 1e-3
 
 # Use the determinant objective with scaled sensitivity matrix
-objective_option = os.environ.get("BENCH_OBJECTIVE_OPTION", "determinant")
-print(f"Objective option: {objective_option}")
+objective_option = "determinant"
 scale_nominal_param_value = True
 
 # Create the DesignOfExperiments object
@@ -301,6 +294,29 @@ _only_compute_fim_lower=True,
 )
 doe_obj.run_doe()
 
+# Parse IPOPT log and print optimization count metrics in a consistent format
+txt = ""
+if os.path.exists("ipopt.out"):
+    with open("ipopt.out", "r", encoding="utf-8", errors="replace") as f:
+        txt = f.read()
+
+def grab_int(pat):
+    m = re.search(pat, txt)
+    return int(m.group(1)) if m else None
+
+def grab_float(pat):
+    m = re.search(pat, txt)
+    return float(m.group(1)) if m else None
+
+print("Number of Iterations....:", grab_int(r"Number of Iterations.*:\s+(\d+)"))
+print("Number of objective function evaluations             =", grab_int(r"Number of objective function evaluations\s*=\s*(\d+)"))
+print("Number of objective gradient evaluations             =", grab_int(r"Number of objective gradient evaluations\s*=\s*(\d+)"))
+print("Number of equality constraint evaluations            =", grab_int(r"Number of equality constraint evaluations\s*=\s*(\d+)"))
+print("Number of equality constraint Jacobian evaluations   =", grab_int(r"Number of equality constraint Jacobian evaluations\s*=\s*(\d+)"))
+print("Number of Lagrangian Hessian evaluations             =", grab_int(r"Number of Lagrangian Hessian evaluations\s*=\s*(\d+)"))
+print("Total CPU secs in IPOPT (w/o function evaluations)   =", grab_float(r"Total CPU secs in IPOPT \(w/o function evaluations\)\s*=\s*([0-9eE+\-\.]+)"))
+print("Total CPU secs in NLP function evaluations           =", grab_float(r"Total CPU secs in NLP function evaluations\s*=\s*([0-9eE+\-\.]+)"))
+
 #     if run == 1: ## Do this only on run 1
 #         ## Header names
 #         HEADERS = [
@@ -326,67 +342,6 @@ doe_obj.run_doe()
 #     ws.append(row)
     
 # wb.save(XLSX_PATH)
-
-''' Print out IPOPT log- written with the help of chatGPT 5.2'''
-
-import re ## Module that helps search for the string of interest
-
-if os.path.exists("ipopt.out"):
-    with open("ipopt.out", "r", encoding="utf-8", errors="replace") as f:
-        txt = f.read()
-else:
-    print("WARNING: ipopt.out not found; skipping IPOPT log parse details.")
-    txt = ""
-
-def grab_int(pat):
-    m = re.search(pat, txt)
-    return int(m.group(1)) if m else None
-
-def grab_float(pat):
-    m = re.search(pat, txt)
-    return float(m.group(1)) if m else None
-
-# Number of Iterations
-print("Number of Iterations....:", grab_int(r"Number of Iterations.*:\s+(\d+)"))
-
-# Scaled/unscaled final table (print block exactly like you showed)
-m = re.search(
-    r"Objective\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-    r"Dual infeasibility\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-    r"Constraint violation\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-    r"Complementarity\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-    r"Overall NLP error\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+)",
-    txt,
-    re.DOTALL,
-)
-if m:
-    print("\n                                   (scaled)                 (unscaled)")
-    print(f"Objective...............:  {m.group(1)}   {m.group(2)}")
-    print(f"Dual infeasibility......:  {m.group(3)}   {m.group(4)}")
-    print(f"Constraint violation....:  {m.group(5)}   {m.group(6)}")
-    print(f"Complementarity.........:  {m.group(7)}   {m.group(8)}")
-    print(f"Overall NLP error.......:  {m.group(9)}   {m.group(10)}\n")
-
-# Evaluation counts
-print("Number of objective function evaluations             =", grab_int(r"Number of objective function evaluations\s*=\s*(\d+)"))
-print("Number of objective gradient evaluations             =", grab_int(r"Number of objective gradient evaluations\s*=\s*(\d+)"))
-print("Number of equality constraint evaluations            =", grab_int(r"Number of equality constraint evaluations\s*=\s*(\d+)"))
-print("Number of inequality constraint evaluations          =", grab_int(r"Number of inequality constraint evaluations\s*=\s*(\d+)"))
-print("Number of equality constraint Jacobian evaluations   =", grab_int(r"Number of equality constraint Jacobian evaluations\s*=\s*(\d+)"))
-print("Number of inequality constraint Jacobian evaluations =", grab_int(r"Number of inequality constraint Jacobian evaluations\s*=\s*(\d+)"))
-print("Number of Lagrangian Hessian evaluations             =", grab_int(r"Number of Lagrangian Hessian evaluations\s*=\s*(\d+)"))
-
-# CPU times
-print("Total CPU secs in IPOPT (w/o function evaluations)   =", grab_float(r"Total CPU secs in IPOPT \(w/o function evaluations\)\s*=\s*([0-9.]+)"))
-print("Total CPU secs in NLP function evaluations           =", grab_float(r"Total CPU secs in NLP function evaluations\s*=\s*([0-9.]+)"))
-
-# EXIT line
-m = re.search(r"EXIT:\s*(.*)", txt)
-print("EXIT:", m.group(1).strip() if m else None)
-
-
-''' Print out a results summary'''
-
 
 
 # Print out a results summary
@@ -419,4 +374,3 @@ print("Total wall time (s):", doe_obj.results["Wall-clock Time"])
 
 ###################
 # End optimal DoE
-

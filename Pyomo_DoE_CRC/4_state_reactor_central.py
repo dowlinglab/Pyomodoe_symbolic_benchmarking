@@ -2,25 +2,19 @@
 # coding: utf-8
 
 # In[1]:
-    
-
-    
-import os
-if os.path.exists("ipopt.out"):
-    os.remove("ipopt.out")
 
 
 "Modifications to avoid the IPOPT Error on CRC"
 
 import shutil
+import os
+import re
 import pyomo.environ as pyo
-
 IPOPT_BIN = shutil.which("ipopt")
 
 def make_ipopt():
     set = pyo.SolverFactory("ipopt", executable = IPOPT_BIN)
     set.options["linear_solver"] = "ma57"
-    # # ---- IPOPT logging ----
     set.options["output_file"] = "ipopt.out"
     set.options["file_print_level"] = 12
     return set
@@ -247,7 +241,8 @@ class ReactorExperiment(Experiment):
 
 
 # In[3]:
-
+import numpy as np
+prior_FIM = None
 
 #  ___________________________________________________________________________
 #
@@ -286,6 +281,7 @@ from pyomo.environ import (
 data_ex = {"CA0": 5.0, "CA_bounds": [1.0, 5.0], "CB0": 0.0, "CC0": 0.0, "t_range": [0, 1],
            "control_points": {"0": 500, "0.125": 300, "0.25": 300, "0.375": 300, "0.5": 300, "0.625": 300, "0.75": 300,
                               "0.875": 300, "1": 300}, "T_bounds": [300, 700], "A1": 84.79, "A2": 371.72, "E1": 7.78, "E2": 15.05}
+
 # Put temperature control time points into correct format for reactor experiment
 data_ex["control_points"] = {
     float(k): v for k, v in data_ex["control_points"].items()
@@ -300,8 +296,7 @@ fd_formula = "central"
 step_size = 1e-3
 
 # Use the determinant objective with scaled sensitivity matrix
-objective_option = os.environ.get("BENCH_OBJECTIVE_OPTION", "determinant")
-print(f"Objective option: {objective_option}")
+objective_option = "determinant"
 scale_nominal_param_value = True
 
 # Create the DesignOfExperiments object
@@ -313,7 +308,7 @@ scale_nominal_param_value = True
 
 
 
-
+"Calling the Doe object 1000 times, saving to an excel file"
 ## Importing required packages
 
 from pathlib import Path
@@ -342,7 +337,6 @@ from openpyxl import Workbook, load_workbook
 # design_names = None # specifies the column names, will be filled at the first run
 
 
-
 doe_obj = DesignOfExperiments(
 experiment,
 fd_formula=fd_formula,
@@ -350,29 +344,23 @@ step=step_size,
 objective_option=objective_option,
 scale_constant_value=1,
 scale_nominal_param_value=scale_nominal_param_value,
-prior_FIM=None,
+prior_FIM=prior_FIM,
 jac_initial=None,
 fim_initial=None,
 L_diagonal_lower_bound=1e-7,
 solver= make_ipopt(),#SolverFactory('IPOPT'),
-tee=False,
+tee=True,
 get_labeled_model_args=None,
 _Cholesky_option=True,
 _only_compute_fim_lower=True,
 )
 doe_obj.run_doe()
 
-
-''' Print out IPOPT log- written with the help of chatGPT 5.2'''
-
-import re ## Module that helps search for the string of interest
-
+# Parse IPOPT log and print optimization count metrics in a consistent format
+txt = ""
 if os.path.exists("ipopt.out"):
     with open("ipopt.out", "r", encoding="utf-8", errors="replace") as f:
         txt = f.read()
-else:
-    print("WARNING: ipopt.out not found; skipping IPOPT log parse details.")
-    txt = ""
 
 def grab_int(pat):
     m = re.search(pat, txt)
@@ -382,50 +370,42 @@ def grab_float(pat):
     m = re.search(pat, txt)
     return float(m.group(1)) if m else None
 
-# Number of Iterations
 print("Number of Iterations....:", grab_int(r"Number of Iterations.*:\s+(\d+)"))
-
-# Scaled/unscaled final table (print block exactly like you showed)
-m = re.search(
-    r"Objective\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-    r"Dual infeasibility\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-    r"Constraint violation\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-    r"Complementarity\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-    r"Overall NLP error\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+)",
-    txt,
-    re.DOTALL,
-)
-if m:
-    print("\n                                   (scaled)                 (unscaled)")
-    print(f"Objective...............:  {m.group(1)}   {m.group(2)}")
-    print(f"Dual infeasibility......:  {m.group(3)}   {m.group(4)}")
-    print(f"Constraint violation....:  {m.group(5)}   {m.group(6)}")
-    print(f"Complementarity.........:  {m.group(7)}   {m.group(8)}")
-    print(f"Overall NLP error.......:  {m.group(9)}   {m.group(10)}\n")
-
-# Evaluation counts
 print("Number of objective function evaluations             =", grab_int(r"Number of objective function evaluations\s*=\s*(\d+)"))
 print("Number of objective gradient evaluations             =", grab_int(r"Number of objective gradient evaluations\s*=\s*(\d+)"))
 print("Number of equality constraint evaluations            =", grab_int(r"Number of equality constraint evaluations\s*=\s*(\d+)"))
-print("Number of inequality constraint evaluations          =", grab_int(r"Number of inequality constraint evaluations\s*=\s*(\d+)"))
 print("Number of equality constraint Jacobian evaluations   =", grab_int(r"Number of equality constraint Jacobian evaluations\s*=\s*(\d+)"))
-print("Number of inequality constraint Jacobian evaluations =", grab_int(r"Number of inequality constraint Jacobian evaluations\s*=\s*(\d+)"))
 print("Number of Lagrangian Hessian evaluations             =", grab_int(r"Number of Lagrangian Hessian evaluations\s*=\s*(\d+)"))
+print("Total CPU secs in IPOPT (w/o function evaluations)   =", grab_float(r"Total CPU secs in IPOPT \(w/o function evaluations\)\s*=\s*([0-9eE+\-\.]+)"))
+print("Total CPU secs in NLP function evaluations           =", grab_float(r"Total CPU secs in NLP function evaluations\s*=\s*([0-9eE+\-\.]+)"))
 
-# CPU times
-print("Total CPU secs in IPOPT (w/o function evaluations)   =", grab_float(r"Total CPU secs in IPOPT \(w/o function evaluations\)\s*=\s*([0-9.]+)"))
-print("Total CPU secs in NLP function evaluations           =", grab_float(r"Total CPU secs in NLP function evaluations\s*=\s*([0-9.]+)"))
+#     if run == 1: ## Do this only on run 1
+#         ## Header names
+#         HEADERS = [
+#             "run",
+#             "solve_time",
+#             "build_time",
+#             "init_time",
+#             "wall_time",
+#             "objective_value"
+#         ] + list(doe_obj.results["Experiment Design Names"])
+        
+#         ws.append(HEADERS)
 
-# EXIT line
-m = re.search(r"EXIT:\s*(.*)", txt)
-print("EXIT:", m.group(1).strip() if m else None)
+#     row = [
+#         run,
+#         doe_obj.results["Solve Time"],
+#         doe_obj.results["Build Time"],
+#         doe_obj.results["Initialization Time"],
+#         doe_obj.results["Wall-clock Time"],
+#         pyo.value(doe_obj.model.objective)
+#     ] + list(doe_obj.results["Experiment Design"])
 
+#     ws.append(row)
+    
+# wb.save(XLSX_PATH)
 
-''' Print out a results summary'''
-
-
-
-
+# Print out a results summary
 print("Optimal experiment values: ")
 print(
     "\tInitial concentration: {:.2f}".format(
@@ -453,10 +433,9 @@ print("Build time (s):", doe_obj.results["Build Time"])
 print("Initialization time (s):", doe_obj.results["Initialization Time"])
 print("Total wall time (s):", doe_obj.results["Wall-clock Time"])
 
-
-
-
 ###################
 # End optimal DoE
 
 
+print(doe_obj.results["FIM"]) 
+print(doe_obj.results["FIM Condition Number"]) 

@@ -209,10 +209,10 @@ scale_nominal_param_value = True
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--nfe_t", type=int, default=2)
+    parser.add_argument("--nfe_t", type=int, default=4)
     parser.add_argument("--nfe_x", type=int, default=2)
-    parser.add_argument("--ncp_t", type=int, default=2)
-    parser.add_argument("--ncp_x", type=int, default=2)
+    parser.add_argument("--ncp_t", type=int, default=1)
+    parser.add_argument("--ncp_x", type=int, default=1)
     parser.add_argument("--out_json", type=str, default="")
     parser.add_argument("--run_dir", type=str, default="")
     parser.add_argument("--ipopt_out", type=str, default="")

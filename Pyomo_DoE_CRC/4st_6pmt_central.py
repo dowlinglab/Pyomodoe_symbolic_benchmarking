@@ -23,28 +23,105 @@
 # 
 # This model solves for the unscaled version but with bounds. 
 
+"""
+From LHS sampling:
+
+Best run: 137,  lambda_min = 1.1278e+08
+Best x0: 1.0312
+[[ 1.34668046e+11  8.44492658e+08 -1.47726019e+10  8.29380060e+08
+   4.87709268e+09 -2.20234471e+10]
+ [ 8.44492658e+08  3.77264152e+08  2.45596225e+07 -5.35565804e+07
+   2.83074977e+08 -3.38681043e+08]
+ [-1.47726019e+10  2.45596225e+07  2.05376349e+09 -1.23087564e+08
+  -4.28787339e+08  2.63124128e+09]
+ [ 8.29380060e+08 -5.35565804e+07 -1.23087564e+08  3.88062956e+08
+   1.08235953e+08 -1.06568761e+08]
+ [ 4.87709268e+09  2.83074977e+08 -4.28787339e+08  1.08235953e+08
+   7.60701173e+08 -9.05315768e+08]
+ [-2.20234471e+10 -3.38681043e+08  2.63124128e+09 -1.06568761e+08
+  -9.05315768e+08  4.28821346e+09]]
+  theta_hat: [-0.85094311  2.36173033 -1.20229126  2.9533773  -2.          0.76487812]
+u1 profile: {'u1[0]': np.float64(0.174842093346535), 'u1[0.1]': np.float64(0.009279214255393207), 'u1[0.2]': np.float64(0.21692900598228199), 'u1[0.3]': np.float64(0.6438372386877848), 'u1[0.4]': np.float64(0.041669738503654255), 'u1[0.5]': np.float64(0.8932438853626935), 'u1[0.6]': np.float64(0.915566772209361), 'u1[0.7]': np.float64(0.4059037030722001), 'u1[0.8]': np.float64(0.07753581099965609)}
+u2 profile: {'u2[0]': np.float64(0.3911355245645257), 'u2[0.1]': np.float64(0.12864431056882453), 'u2[0.2]': np.float64(0.20752870111594068), 'u2[0.3]': np.float64(0.00901258974068361), 'u2[0.4]': np.float64(0.11569556915739503), 'u2[0.5]': np.float64(0.28588466191715795), 'u2[0.6]': np.float64(0.6454892516579549), 'u2[0.7]': np.float64(0.4756126150938787), 'u2[0.8]': np.float64(0.8152020186897024)}
+FIM from regression [[ 1.06010125e+09 -2.01692707e+08 -1.31720659e+08 -1.41501663e+08
+  -5.25373959e+07 -1.15122645e+08]
+ [-2.01692707e+08  3.89207131e+07  2.57248405e+07  2.69033038e+07
+   1.01028015e+07  2.13932697e+07]
+ [-1.31720659e+08  2.57248405e+07  1.72003459e+07  1.75798319e+07
+   6.68109415e+06  1.36294417e+07]
+ [-1.41501663e+08  2.69033038e+07  1.75798319e+07  1.90964400e+07
+   7.14063187e+06  1.53759800e+07]
+ [-5.25373959e+07  1.01028015e+07  6.68109415e+06  7.14063187e+06
+   2.72475055e+06  5.53642153e+06]
+ [-1.15122645e+08  2.13932697e+07  1.36294417e+07  1.53759800e+07
+   5.53642153e+06  1.32575546e+07]]
+"""
+
 # In[1]:
 
 
-import os
-if os.path.exists("ipopt.out"):
-    os.remove("ipopt.out")
-  
+# Prior
+
+import numpy as np
+
+
+# FIM_prior = np.array([
+#     [1.34668046e+11,  8.44492658e+08, -1.47726019e+10,  8.29380060e+08,  4.87709268e+09, -2.20234471e+10],
+#     [8.44492658e+08,  3.77264152e+08,  2.45596225e+07, -5.35565804e+07,  2.83074977e+08, -3.38681043e+08],
+#     [-1.47726019e+10, 2.45596225e+07,  2.05376349e+09, -1.23087564e+08, -4.28787339e+08,  2.63124128e+09],
+#     [8.29380060e+08, -5.35565804e+07, -1.23087564e+08,  3.88062956e+08,  1.08235953e+08, -1.06568761e+08],
+#     [4.87709268e+09,  2.83074977e+08, -4.28787339e+08,  1.08235953e+08,  7.60701173e+08, -9.05315768e+08],
+#     [-2.20234471e+10,-3.38681043e+08,  2.63124128e+09, -1.06568761e+08, -9.05315768e+08,  4.28821346e+09]
+# ], dtype=float)
+
+
+# np.array([
+#     [1.325688594559542e11,   8.475538823767112e8,  -1.4772939762421972e10,  8.337628005370667e8,   4.876386343256582e9,  -2.2022722780894554e10],
+#     [8.475538823767112e8,    3.772420444214335e8,   2.4562164118298158e7,  -5.358890748053169e7,   2.830805948207615e8,  -3.386853959400422e8],
+#     [-1.4772939762421972e10, 2.4562164118298158e7,  2.0537631930426493e9,  -1.2308384688137838e8, -4.2878798570167774e8,  2.631241783082207e9],
+#     [8.337628005370667e8,   -5.358890748053169e7,  -1.2308384688137838e8,  3.880156806942062e8,   1.0824417270665269e8, -1.0657512048863566e8],
+#     [4.876386343256582e9,    2.830805948207615e8,  -4.2878798570167774e8,  1.0824417270665269e8,  7.606997422369835e8,  -9.053146650333288e8],
+#     [-2.2022722780894554e10,-3.386853959400422e8,   2.631241783082207e9,  -1.0657512048863566e8, -9.053146650333288e8,   4.2882125744229627e9],
+# ], dtype=float)
+import numpy as np
+
+cov_np = np.array([
+    [ 6.764268e-11,  1.413123e-10,  1.566025e-10,  2.142667e-11, -1.171058e-10,  2.382099e-10],
+    [ 1.413123e-10,  5.684905e-09, -1.895365e-09,  9.259701e-10, -1.866617e-09,  1.963554e-09],
+    [ 1.566025e-10, -1.895365e-09,  3.765665e-09,  1.912707e-10, -2.181173e-10, -1.694494e-09],
+    [ 2.142667e-11,  9.259701e-10,  1.912707e-10,  2.896722e-09, -8.275772e-10, -3.693762e-11],
+    [-1.171058e-10, -1.866617e-09, -2.181173e-10, -8.275772e-10,  2.647108e-09, -7.646613e-11],
+    [ 2.382099e-10,  1.963554e-09, -1.694494e-09, -3.693762e-11, -7.646613e-11,  2.632001e-09],
+], dtype=float)
+
+FIM_prior = np.array([
+    [ 1.329750e+11,  8.423852e+08, -1.477523e+10,  8.375204e+08,  4.884950e+09, -2.202207e+10],
+    [ 8.423852e+08,  3.802776e+08,  2.354485e+07, -5.338939e+07,  2.809237e+08, -3.373686e+08],
+    [-1.477523e+10,  2.354485e+07,  2.056381e+09, -1.234037e+08, -4.302256e+08,  2.629347e+09],
+    [ 8.375204e+08, -5.338939e+07, -1.234037e+08,  3.941231e+08,  1.093692e+08, -1.067092e+08],
+    [ 4.884950e+09,  2.809237e+08, -4.302256e+08,  1.093692e+08,  7.645734e+08, -9.049249e+08],
+    [-2.202207e+10, -3.373686e+08,  2.629347e+09, -1.067092e+08, -9.049249e+08,  4.289737e+09]
+], dtype=float)
+
 
 
 "Modifications to avoid the IPOPT Error on CRC"
 
 import shutil
+import os
+import re
 import pyomo.environ as pyo
 
 IPOPT_BIN = shutil.which("ipopt")
 
 def make_ipopt():
-    set = pyo.SolverFactory("ipopt", executable = IPOPT_BIN)
+    set = pyo.SolverFactory("ipopt")
     set.options["linear_solver"] = "ma57"
-    # # ---- IPOPT logging ----
     set.options["output_file"] = "ipopt.out"
     set.options["file_print_level"] = 12
+    tol=1e-6
+    nlp_scaling_method="gradient-based"
+    linear_solver="ma57"
     return set
 
 
@@ -107,7 +184,7 @@ class SixParameterExperiment(Experiment):
         # State odes
         @m.Constraint(m.t)
         def x_ode(m, t):
-            return m.dxdt[t] == -m.a1 * m.x[t] + m.a2*m.u1[t] + m.a3*m.u1[t]**2  + m.a4*m.u2[t] + m.a5*m.u2[t]**2 + m.a6*pyo.exp(-m.x[t])
+            return m.dxdt[t] == m.a1 * m.x[t] + m.a2*m.u1[t] + m.a3*m.u1[t]**2  + m.a4*m.u2[t] + m.a5*m.u2[t]**2 + m.a6*pyo.exp(-m.x[t])
             
 
 
@@ -247,13 +324,43 @@ from pyomo.environ import (
 
 
 
-data_ex = {"x0": 1, "x_bounds": [0, 5], "t_range": [0, 1],
-           "control_points1": {"0": 0.5, "0.125": 0.5, "0.25": 0.5, "0.375": 0.5, "0.5": 0.5, "0.625": 0.5, "0.75": 0.5,
-                              "0.875": 0.5, "1": 0.5}, "u_bounds": [0, 1],
-           "control_points2": {"0": 0.5, "0.125": 0.5, "0.25": 0.5, "0.375": 0.5, "0.5":0.5, "0.625": 0.5, "0.75": 0.5,
-                              "0.875": 0.5, "1": 0.5},
-           "a1": -0.8, "a2":1.2, "a3": -0.3, "a4": 1.8, "a5": -0.7, "a6": 0.6}
+data_ex = {
+    "x0": 4.2639,
+    "x_bounds": [0, 5],
+    "t_range": [0, 1],
+    "u_bounds": [0, 1],
+    "control_points1": {
+        0.0: 0.3934061603361689,
+        0.1: 0.38466927866012396,
+        0.2: 0.3913168439604149,
+        0.3: 0.40020677437766017,
+        0.4: 0.4128135265734445,
+        0.5: 0.4305472734079194,
+        0.6: 0.45228085055157907,
+        0.7: 0.4748351945943572,
+        0.8: 0.49810483621169543,
+    },
+    "control_points2": {
+        0.0: 0.36160798498878205,
+        0.1: 0.35016717117179896,
+        0.2: 0.35886383218374884,
+        0.3: 0.3705699054349349,
+        0.4: 0.38726930575823565,
+        0.5: 0.4108142444013255,
+        0.6: 0.43946063670443786,
+        0.7: 0.46858567338946566,
+        0.8: 0.4985023922695204,
+    },
+    "a1": -0.800002,
+    "a2": 1.199982,
+    "a3": -0.300003,
+    "a4": 1.799990,
+    "a5": -0.699992,
+    "a6": 0.599990,
+}
+
 # Put control input control time points into correct format for two parameter experiment
+
 data_ex["control_points1"] = {
     float(k): v for k, v in data_ex["control_points1"].items()
 }
@@ -271,8 +378,7 @@ fd_formula = "central"
 step_size = 1e-3
 
 
-objective_option = os.environ.get("BENCH_OBJECTIVE_OPTION", "determinant")
-print(f"Objective option: {objective_option}")
+objective_option = "determinant"
 scale_nominal_param_value = True
 
 
@@ -310,8 +416,6 @@ from openpyxl import Workbook, load_workbook
 
 
 
-
-
 doe_obj = DesignOfExperiments(
 experiment,
 fd_formula=fd_formula,
@@ -319,28 +423,23 @@ step=step_size,
 objective_option=objective_option,
 scale_constant_value=1,
 scale_nominal_param_value=scale_nominal_param_value,
-prior_FIM=None,
+prior_FIM=FIM_prior,
 jac_initial=None,
 fim_initial=None,
 L_diagonal_lower_bound=1e-7,
 solver= make_ipopt(),#SolverFactory('IPOPT', options={'linear_solver': 'mumps',}), #'print_options_documentation' : 'yes', 'print_level': 5}),
-tee=False,
+tee= True,
 get_labeled_model_args=None,
 _Cholesky_option=True,
 _only_compute_fim_lower=True,
 )
 doe_obj.run_doe()
 
-''' Print out IPOPT log- written with the help of chatGPT 5.2'''
-
-import re ## Module that helps search for the string of interest
-
+# Parse IPOPT log and print optimization count/time metrics in a consistent format
+txt = ""
 if os.path.exists("ipopt.out"):
     with open("ipopt.out", "r", encoding="utf-8", errors="replace") as f:
         txt = f.read()
-else:
-    print("WARNING: ipopt.out not found; skipping IPOPT log parse details.")
-    txt = ""
 
 def grab_int(pat):
     m = re.search(pat, txt)
@@ -350,48 +449,18 @@ def grab_float(pat):
     m = re.search(pat, txt)
     return float(m.group(1)) if m else None
 
-# Number of Iterations
 print("Number of Iterations....:", grab_int(r"Number of Iterations.*:\s+(\d+)"))
-
-# Scaled/unscaled final table (print block exactly like you showed)
-m = re.search(
-    r"Objective\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-    r"Dual infeasibility\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-    r"Constraint violation\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-    r"Complementarity\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+).*?"
-    r"Overall NLP error\.*:\s*([-+eE0-9.]+)\s+([-+eE0-9.]+)",
-    txt,
-    re.DOTALL,
-)
-if m:
-    print("\n                                   (scaled)                 (unscaled)")
-    print(f"Objective...............:  {m.group(1)}   {m.group(2)}")
-    print(f"Dual infeasibility......:  {m.group(3)}   {m.group(4)}")
-    print(f"Constraint violation....:  {m.group(5)}   {m.group(6)}")
-    print(f"Complementarity.........:  {m.group(7)}   {m.group(8)}")
-    print(f"Overall NLP error.......:  {m.group(9)}   {m.group(10)}\n")
-
-# Evaluation counts
 print("Number of objective function evaluations             =", grab_int(r"Number of objective function evaluations\s*=\s*(\d+)"))
 print("Number of objective gradient evaluations             =", grab_int(r"Number of objective gradient evaluations\s*=\s*(\d+)"))
 print("Number of equality constraint evaluations            =", grab_int(r"Number of equality constraint evaluations\s*=\s*(\d+)"))
-print("Number of inequality constraint evaluations          =", grab_int(r"Number of inequality constraint evaluations\s*=\s*(\d+)"))
 print("Number of equality constraint Jacobian evaluations   =", grab_int(r"Number of equality constraint Jacobian evaluations\s*=\s*(\d+)"))
-print("Number of inequality constraint Jacobian evaluations =", grab_int(r"Number of inequality constraint Jacobian evaluations\s*=\s*(\d+)"))
 print("Number of Lagrangian Hessian evaluations             =", grab_int(r"Number of Lagrangian Hessian evaluations\s*=\s*(\d+)"))
-
-# CPU times
-print("Total CPU secs in IPOPT (w/o function evaluations)   =", grab_float(r"Total CPU secs in IPOPT \(w/o function evaluations\)\s*=\s*([0-9.]+)"))
-print("Total CPU secs in NLP function evaluations           =", grab_float(r"Total CPU secs in NLP function evaluations\s*=\s*([0-9.]+)"))
-
-# EXIT line
-m = re.search(r"EXIT:\s*(.*)", txt)
-print("EXIT:", m.group(1).strip() if m else None)
+print("Total CPU secs in IPOPT (w/o function evaluations)   =", grab_float(r"Total CPU secs in IPOPT \(w/o function evaluations\)\s*=\s*([0-9eE+\-\.]+)"))
+print("Total CPU secs in NLP function evaluations           =", grab_float(r"Total CPU secs in NLP function evaluations\s*=\s*([0-9eE+\-\.]+)"))
 
 
-''' Print out a results summary'''
 
-
+# Print out a results summary
 print("Optimal experiment values: ")
 print(
     "\tInitial concentration: {:.2f}".format(
@@ -419,6 +488,9 @@ print("Build time (s):", doe_obj.results["Build Time"])
 print("Initialization time (s):", doe_obj.results["Initialization Time"])
 print("Total wall time (s):", doe_obj.results["Wall-clock Time"])
 
+
+print(FIM_prior)
+
 ###################
 # End optimal DoE
 
@@ -439,3 +511,7 @@ print("Total wall time (s):", doe_obj.results["Wall-clock Time"])
 
 
 # In[ ]:
+
+
+print(doe_obj.results["FIM"]) 
+print(doe_obj.results["FIM Condition Number"]) 

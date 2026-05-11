@@ -59,7 +59,7 @@ import os.path ## path manipulation utilities
 
 # from pyomo.environ import *
 # from pyomo.dae import *
-from idaes.core.util import DiagnosticsToolbox
+# from idaes.core.util import DiagnosticsToolbox
 
 import pyomo.environ as pyo
 from pyomo.dae import ContinuousSet, DerivativeVar, Simulator
@@ -166,8 +166,8 @@ class PDE_diffusion(Experiment):
 
 
 
-import idaes 
-from idaes.core.util.model_diagnostics import degrees_of_freedom
+# import idaes 
+# from idaes.core.util.model_diagnostics import degrees_of_freedom
 # print("Degrees of freedom:", degrees_of_freedom(m))
 
 
@@ -263,10 +263,10 @@ from openpyxl import Workbook, load_workbook
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--nfe_t", type=int, default=75)
-    parser.add_argument("--nfe_x", type=int, default=50)
-    parser.add_argument("--ncp_t", type=int, default=2)
-    parser.add_argument("--ncp_x", type=int, default=2)
+    parser.add_argument("--nfe_t", type=int, default=4)
+    parser.add_argument("--nfe_x", type=int, default=2)
+    parser.add_argument("--ncp_t", type=int, default=1)
+    parser.add_argument("--ncp_x", type=int, default=1)
     parser.add_argument("--out_json", type=str, default="")
     parser.add_argument("--run_dir", type=str, default="")
     parser.add_argument("--ipopt_out", type=str, default="")
